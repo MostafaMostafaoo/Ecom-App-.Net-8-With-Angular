@@ -10,5 +10,6 @@ namespace Ecom.core.Interfaces
     public interface IPhotoRepositry : IGenericRepositry<Photo>
     {
         //for futuer
+
     }
 }

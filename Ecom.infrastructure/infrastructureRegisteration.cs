@@ -1,10 +1,13 @@
 ﻿using Ecom.core.Interfaces;
+using Ecom.core.Services;
 using Ecom.infrastructure.Data;
 using Ecom.infrastructure.Repostories;
+using Ecom.infrastructure.Repostories.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query.SqlExpressions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.FileProviders;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -28,8 +31,10 @@ namespace Ecom.infrastructure
 
             // Apply unit of work
             services.AddScoped<IUnitOfWork, UnitOfWork>();
-
-
+            services.AddSingleton<IImageManagementService, ImageManagementService>();
+            services.AddSingleton<IFileProvider>(new PhysicalFileProvider(root: Path.Combine(Directory.GetCurrentDirectory(), "wwwroot")));
+         
+          
             //Apply DbContext
             services.AddDbContext<AppDbcontext>(options =>
             {
@@ -38,5 +43,15 @@ namespace Ecom.infrastructure
 
             return services;
         }
+
+        // ✅ نضيف الدالة المساعدة داخل نفس الكلاس
+        private static bool IsRunningInEfCoreDesignTime()
+        {
+            return Environment.GetCommandLineArgs().Any(arg => arg.Contains("ef", StringComparison.OrdinalIgnoreCase));
+        }
+
     }
+
+
+
 }

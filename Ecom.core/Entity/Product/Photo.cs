@@ -13,8 +13,8 @@ namespace Ecom.core.Entity.Product
 
         public int ProductId { get; set; }
 
-        [ForeignKey(nameof(ProductId))]
-        public virtual Product Product { get; set; }
+      //  [ForeignKey(nameof(ProductId))]
+         //public virtual Product Product { get; set; }
     }
 
 }

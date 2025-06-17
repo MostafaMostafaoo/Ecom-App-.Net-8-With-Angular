@@ -47,12 +47,14 @@ namespace Ecom.infrastructure.Repostories
             return await query.ToListAsync();
         }
 
+   
+
         public async Task<T> GetByIdAsync(int id)
         {
             var entity = await _context.Set<T>().FindAsync(id);
             return entity;
         }
-
+        
         public async Task<T> GetByIdAsync(int id, params Expression<Func<T, object>>[] includes)
         {
             var query = _context.Set<T>().AsQueryable();
@@ -64,6 +66,7 @@ namespace Ecom.infrastructure.Repostories
             var entity = await query.FirstOrDefaultAsync(x => EF.Property<int>(x, "Id") == id);
             return entity;
         }
+        
 
         public async Task UpdateAsync(T entity)
         {

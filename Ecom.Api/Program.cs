@@ -1,4 +1,7 @@
+using Ecom.core.Interfaces;
 using Ecom.infrastructure;
+using Ecom.infrastructure.Repostories;
+using Microsoft.Extensions.FileProviders;
 namespace Ecom.Api
 {
     public class Program
@@ -14,6 +17,13 @@ namespace Ecom.Api
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
             builder.Services.InfrastructureConfiguration(builder.Configuration);
+            builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+
+            // builder.Services.AddSingleton<IFileProvider>(
+            //new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot"))
+            // );
+            builder.Services.InfrastructureConfiguration(builder.Configuration);
+
 
             var app = builder.Build();
 
