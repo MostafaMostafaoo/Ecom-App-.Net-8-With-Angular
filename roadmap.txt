@@ -1,0 +1,13 @@
+1- create model
+2- create IGenerice &&  Generic
+3-Create DbContext and make migration
+4- Apply Configration with validation
+5- Add infrastracture Registeration
+6- Apply unit to work
+7- Create controller category and product
+8- Create DTO 
+9- Auto Mapper
+10- Helper Handle Response With Clean Code
+11- Create Service to save Image
+12- Complete Handle Error with return not found
+13- Security Part one Create Exception Middleware
