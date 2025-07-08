@@ -10,8 +10,8 @@ namespace Ecom.Api.Middleware
         private readonly RequestDelegate _next;
         private readonly IHostEnvironment _environment;
         private readonly IMemoryCache memoryCache;
-        private readonly TimeSpan _ratelimitWindow = TimeSpan.FromSeconds(30);
-        private readonly int _ratelimitMaxRequests = 10;
+        private readonly TimeSpan _ratelimitWindow = TimeSpan.FromSeconds(100);
+        private readonly int _ratelimitMaxRequests = 30;
 
         public ExceptionMiddleware(RequestDelegate next, IHostEnvironment environment, IMemoryCache memoryCache)
         {
@@ -21,11 +21,15 @@ namespace Ecom.Api.Middleware
             this.memoryCache = memoryCache;
         }
 
+
+
+
         public async Task InvokeAsync(HttpContext context)
         {
             try
             {
                 ApplySecurity(context);
+              
                 if (IsRequestAllowed(context) == false)
                 {
                     context.Response.StatusCode = (int)HttpStatusCode.TooManyRequests;
@@ -37,6 +41,7 @@ namespace Ecom.Api.Middleware
                     await context.Response.WriteAsJsonAsync(response);
                 }
                 await _next(context);
+                
             }
             catch (Exception ex)
             {
@@ -52,6 +57,33 @@ namespace Ecom.Api.Middleware
             }
         }
 
+        /*
+         private bool IsRequestAllowed(HttpContext context)
+         {
+             var ip = context.Connection.RemoteIpAddress?.ToString() ?? "unknown";
+             var cacheKey = $"Rate:{ip}";
+             var now = DateTime.UtcNow;
+
+             var entry = memoryCache.Get<(DateTime timestamp, int count)>(cacheKey);
+
+             if (entry.timestamp != default && now - entry.timestamp < _ratelimitWindow)
+             {
+                 if (entry.count >= _ratelimitMaxRequests)
+
+                 {
+                     return false;
+                 }
+
+                 memoryCache.Set(cacheKey, (entry.timestamp, entry.count + 1), _ratelimitWindow);
+             }
+             else
+             {
+                 memoryCache.Set(cacheKey, (now, 1), _ratelimitWindow);
+             }
+
+             return true;
+         }
+         */
 
         private bool IsRequestAllowed(HttpContext context)
         {
@@ -61,24 +93,32 @@ namespace Ecom.Api.Middleware
 
             var entry = memoryCache.Get<(DateTime timestamp, int count)>(cacheKey);
 
-            if (entry.timestamp != default && now - entry.timestamp < _ratelimitWindow)
+            // إذا كان هذا أول طلب أو انقضت المدة السابقة
+            if (entry.timestamp == default || now - entry.timestamp >= _ratelimitWindow)
             {
-                if (entry.count >= _ratelimitMaxRequests)
-
-                {
-                    return false;
-                }
-
-                memoryCache.Set(cacheKey, (entry.timestamp, entry.count + 1), _ratelimitWindow);
-            }
-            else
-            {
+                // بدأ فترة جديدة
                 memoryCache.Set(cacheKey, (now, 1), _ratelimitWindow);
+                return true;
             }
 
+            // إذا إحنا ما زلنا في فترة السماح
+            if (now - entry.timestamp < _ratelimitWindow)
+            {
+                // لا تطبق الريت ليميت الآن
+                memoryCache.Set(cacheKey, (entry.timestamp, entry.count + 1), _ratelimitWindow);
+                return true;
+            }
+
+            // إذا تعدى عدد الطلبات المسموح به
+            if (entry.count >= _ratelimitMaxRequests)
+            {
+                return false;
+            }
+
+            // كل شيء طبيعي، زود العداد
+            memoryCache.Set(cacheKey, (entry.timestamp, entry.count + 1), _ratelimitWindow);
             return true;
         }
-
 
         private void ApplySecurity(HttpContext context)
         {

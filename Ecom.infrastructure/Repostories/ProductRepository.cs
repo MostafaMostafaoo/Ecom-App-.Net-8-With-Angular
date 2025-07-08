@@ -2,6 +2,7 @@
 using Ecom.core.Entity.Product;
 using Ecom.core.Interfaces;
 using Ecom.core.Services;
+using Ecom.core.Sharing;
 using Ecom.infrastructure.Data;
 using Ecom.infrastructure.Data.DTO;
 using Ecom.infrastructure.Repostories.Services;
@@ -27,6 +28,46 @@ namespace Ecom.infrastructure.Repostories
             this.mapper = mapper;
         }
 
+
+        public async Task<ReturnProductDto> GetAllAsync(ProductParams productParams)
+        {
+            var query = context.Products
+                .Include(m => m.Category)
+                .Include(m => m.Photos)
+                .AsNoTracking();
+
+            //filtering by word
+
+            if (!string.IsNullOrEmpty(productParams.Search))
+            {
+                var searchWords = productParams.Search.Split(' ');
+                query = query.Where(m => searchWords.All(word =>
+                    m.Name.ToLower().Contains(word.ToLower()) ||
+                    m.Description.ToLower().Contains(word.ToLower())
+                ));
+            }
+
+
+
+            if (productParams.CategoryId.HasValue)
+                query = query.Where(m => m.CategoryId == productParams.CategoryId);
+            if (!string.IsNullOrEmpty(productParams.Sort))
+            {
+                query = productParams.Sort switch
+                {
+                    "PriceAce" => query.OrderBy(m => m.NewPrice),
+                    "PriceDce" => query.OrderByDescending(m => m.NewPrice),
+                    _ => query.OrderBy(m => m.NewPrice),
+                };
+            }
+
+            ReturnProductDto returnProductDto = new ReturnProductDto();
+            returnProductDto.TotalCount = query.Count();
+
+            query = query.Skip((productParams.pageSize) * (productParams.PageNumber - 1)).Take(productParams.pageSize);
+            returnProductDto.products = mapper.Map<List<ProductDTO>>(query);
+            return returnProductDto;
+        }
         public async Task<bool> AddAsync(AddProductDTO productDTO)
         {
             if (productDTO == null) return false;

@@ -1,4 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore.Design;
+﻿
+
+using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -14,8 +16,8 @@ namespace Ecom.infrastructure.Data
         {
             var optionsBuilder = new DbContextOptionsBuilder<AppDbcontext>();
 
-            //   هنا سلسلة الاتصال الخاصة بك
-            optionsBuilder.UseSqlServer(connectionString: "Server=DESKTOP-5C5HTFB;Database=Ecom;Trusted_Connection=true;TrustServerCertificate=true");
+           
+            optionsBuilder.UseSqlServer(connectionString: "Server=DESKTOP-5C5HTFB;Database=Ecom11;Trusted_Connection=true;TrustServerCertificate=true");
 
             return new AppDbcontext(optionsBuilder.Options);
         }

@@ -23,10 +23,22 @@ namespace Ecom.Api
             builder.Services.InfrastructureConfiguration(builder.Configuration);
             builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
+            // ????? ????? CORS
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("CORSPolicy", policy =>
+                {
+                    policy.WithOrigins("http://localhost:4200") // ?? ???? ?????
+                          .AllowCredentials()
+                          .AllowAnyHeader()
+                          .AllowAnyMethod();
+                });
+            });
+
             // builder.Services.AddSingleton<IFileProvider>(
             //new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot"))
             // );
-            builder.Services.InfrastructureConfiguration(builder.Configuration);
+          //  builder.Services.InfrastructureConfiguration(builder.Configuration);
 
 
             var app = builder.Build();
@@ -37,13 +49,19 @@ namespace Ecom.Api
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
+
+            app.UseCors("CORSPolicy");
             // app.UseMiddleware<ExceptionMiddleware>();
             app.UseMiddleware<ExceptionMiddleware>();
+            app.UseAuthentication();
+            app.UseAuthorization();
+
+            app.UseStaticFiles();
             app.UseStatusCodePagesWithReExecute("/errors/{0}");
 
             app.UseHttpsRedirection();
 
-            app.UseAuthorization();
+         
 
 
             app.MapControllers();

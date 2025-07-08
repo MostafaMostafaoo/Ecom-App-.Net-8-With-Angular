@@ -1,13 +1,53 @@
-1- create model
-2- create IGenerice &&  Generic
-3-Create DbContext and make migration
-4- Apply Configration with validation
-5- Add infrastracture Registeration
-6- Apply unit to work
-7- Create controller category and product
-8- Create DTO 
-9- Auto Mapper
+1-  create model
+2-  create IGenerice &&  Generic
+3-  Create DbContext and make migration
+4-  Apply Configration with validation
+5-  Add infrastracture Registeration
+6-  Apply unit to work
+7-  Create controller category and product
+8-  Create DTO 
+9-  Auto Mapper
 10- Helper Handle Response With Clean Code
 11- Create Service to save Image
 12- Complete Handle Error with return not found
 13- Security Part one Create Exception Middleware
+14- Add filtering by sorting
+15- Add filtering by category ID
+16- Add Pagination for product .NET
+17- Convert products parameters to complex model type
+18- Create General Pagination And Use it in Product
+19- Add Smart Searching by Using word .NET
+20- Add CORS to .NET App
+21- Run Angular App and Install bootstrap and test
+22- Adding Core Module and Adding New Component With HTML
+23- Adding the NavBar HTML and CSS code
+24- Adding Http Client Module And Test-API Angular
+25- Create First Model-and-Test With-Product
+26- Create Component and Service and Module For Shop Section
+27- Designing the shop page Angular
+28- Shop Component and what is ng Container in Angular 
+29- Complete Enhancement Shop Component
+30- Adding Filtration by Category in Angular
+31- Add filter by Price Sort in Angular
+32- Add Filtration by input text (smart Search) in Angular
+33- Install required package for Pagination - Angular
+34- what is shared component in Angula
+35- what it routing in Angular
+36- Create Component Product Details and Set in router with id
+37- How to get Product by id in angular
+38- Add image zoom Using NPM in Angular
+39- what is Lazy Loading in Angular and How to use it
+40- what is Interceptor and Enhancement Design with add loading in Angular
+41- how to install toastr in Angular
+42  How to Install Redis and Redis UI
+43-  Create basket controller in .NET
+44- Create Basket Module and routing in Angular
+45- How to use UUID (Guid) and Create Basket Model in Angular
+46- display the count item inside basket in navbar in Angular
+47- Adding the increment and decrement functionality | Angular
+48- Create Order Summary card part-1 | Angular
+49- Create Checkout Module and Routing | Angular
+50- What is Identity and How to InstallRequired packaging in Identity | .NET
+51- How to Create Send Email verification for Register | .NET
+52- Create Module and Routing Identity in Angular
+53- Handle Forget Password | Angular
