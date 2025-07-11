@@ -24,6 +24,7 @@ namespace Ecom.Api
             builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
             // ????? ????? CORS
+            /*
             builder.Services.AddCors(options =>
             {
                 options.AddPolicy("CORSPolicy", policy =>
@@ -34,11 +35,29 @@ namespace Ecom.Api
                           .AllowAnyMethod();
                 });
             });
+            */
+
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("CORSPolicy", policy =>
+                {
+                    policy
+                        .WithOrigins("http://localhost:4200") // ???? ???? ????? ??????
+                        .AllowAnyHeader()
+                        .AllowAnyMethod()
+                        .AllowCredentials(); // ????? ???? ?????? ????
+                });
+            });
+
+
+
+
 
             // builder.Services.AddSingleton<IFileProvider>(
             //new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot"))
             // );
-          //  builder.Services.InfrastructureConfiguration(builder.Configuration);
+            //  builder.Services.InfrastructureConfiguration(builder.Configuration);
+
 
 
             var app = builder.Build();

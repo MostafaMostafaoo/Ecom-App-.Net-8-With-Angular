@@ -39,6 +39,10 @@ namespace Ecom.infrastructure
             // Apply unit of work
             services.AddScoped<IUnitOfWork, UnitOfWork>();
 
+            //register token
+
+            services.AddScoped<IOrderService, OrderService>();
+
             //register email service
             services.AddScoped<IEmailService, EmailService>();
 

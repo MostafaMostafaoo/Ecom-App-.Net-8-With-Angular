@@ -12,7 +12,7 @@ namespace Ecom.core.Entity
 
         public string ZipCode { get; set; }
 
-        public string stret { get; set; }
+        public string street { get; set; }
         public string state { get; set; }
 
         public string AppUserId { get; set; }

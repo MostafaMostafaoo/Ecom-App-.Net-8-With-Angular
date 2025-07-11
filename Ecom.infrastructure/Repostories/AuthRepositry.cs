@@ -3,8 +3,10 @@ using Ecom.core.Entity;
 using Ecom.core.Interfaces;
 using Ecom.core.Services;
 using Ecom.core.Sharing;
+using Ecom.infrastructure.Data;
 using Ecom.infrastructure.Repostories.Services;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,12 +23,14 @@ namespace Ecom.infrastructure.Repostories
         private readonly IEmailService emailService;
         private readonly SignInManager<AppUser> signInManager;
         private readonly IGenerateToken generateToken;
-        public AuthRepositry(UserManager<AppUser> userManager, IEmailService emailService, SignInManager<AppUser> signInManager, IGenerateToken generateToken)
+        private readonly AppDbcontext context;
+        public AuthRepositry(UserManager<AppUser> userManager, IEmailService emailService, SignInManager<AppUser> signInManager, IGenerateToken generateToken, AppDbcontext context)
         {
-            this.userManager   = userManager;
-            this.emailService  = emailService;
+            this.userManager = userManager;
+            this.emailService = emailService;
             this.signInManager = signInManager;
             this.generateToken = generateToken;
+            this.context = context;
         }
 
         public async Task<string> RegisterAsync(RegisterDTO registerDTO)
@@ -59,22 +63,6 @@ namespace Ecom.infrastructure.Repostories
                 return result.Errors.ToList()[0].Description;
             }
 
-
-            /*
-            try
-            {
-                var result = await userManager.CreateAsync(user, registerDTO.Password);
-                if (!result.Succeeded)
-                {
-                    var errors = string.Join(separator: ", ", result.Errors.Select(e => e.Description));
-                    return $"Registration failed: {errors}";
-                }
-            }
-            catch (Exception ex)
-            {
-                return $"Exception during user creation: {ex.Message} - {ex.InnerException?.Message}";
-            };
-            */
 
 
 
@@ -170,7 +158,72 @@ namespace Ecom.infrastructure.Repostories
             await SendEmail(findUser.Email, token, "active", "ActiveEmail", "Please active your email, click on button to active");
             return false;
         }
+        /*
+        public async Task<bool> UpdateAddress(string email, Address address)
+        {
+            var findUser = await userManager.FindByEmailAsync(email);
+            if (findUser is null)
+            {
+                return false;
+            }
+            var Myaddress = await context.Addresses.FirstOrDefaultAsync(m => m.AppUserId == findUser.Id);
 
+            if (Myaddress is null)
+            {
+                address.AppUserId = findUser.Id;
+                await context.Addresses.AddAsync(address);
+            }
+            else
+            {
+                address.Id = Myaddress.Id;
+                context.Addresses.Update(address);
+
+            }
+            await context.SaveChangesAsync();
+            return true;
+        }
+        */
+
+        public async Task<bool> UpdateAddress(string email, Address address)
+        {
+            var findUser = await userManager.FindByEmailAsync(email);
+            if (findUser == null)
+            {
+                return false;
+            }
+
+            var myAddress = await context.Addresses.FirstOrDefaultAsync(m => m.AppUserId == findUser.Id);
+
+            if (myAddress == null)
+            {
+                // جديد
+                address.AppUserId = findUser.Id;
+                await context.Addresses.AddAsync(address);
+            }
+            else
+            {
+                // تعديل البيانات فقط على العنصر الموجود
+                myAddress.FirstName = address.FirstName;
+                myAddress.LastName = address.LastName;
+                myAddress.street = address.street;
+                myAddress.City = address.City;
+                myAddress.state = address.state;
+                myAddress.ZipCode = address.ZipCode;
+
+                context.Addresses.Update(myAddress);
+            }
+
+            await context.SaveChangesAsync();
+            return true;
+        }
+
+        public async Task<Address> getUserAddress(string email)
+        {
+            var User = await userManager.FindByEmailAsync(email);
+            var address = await context.Addresses.FirstOrDefaultAsync(m => m.AppUserId == User.Id);
+
+            return address;
+        }
     }
 
 

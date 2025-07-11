@@ -50,7 +50,7 @@ namespace Ecom.infrastructure.Repostories
             CategoryRepositry = new CategoryRepositry(_context);
             PhotoRepositry = new PhotoRepositry(_context);
             CustomerBasket = new CustomerBasketRepository(redis);
-            Auth = new AuthRepositry(userManager, emailService, signInManager,token);
+            Auth = new AuthRepositry(userManager, emailService, signInManager,token,context);
             
         }
     }

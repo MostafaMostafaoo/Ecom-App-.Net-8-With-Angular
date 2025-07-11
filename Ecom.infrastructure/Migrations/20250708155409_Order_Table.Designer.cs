@@ -4,6 +4,7 @@ using Ecom.infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Ecom.infrastructure.Migrations
 {
     [DbContext(typeof(AppDbcontext))]
-    partial class AppDbcontextModelSnapshot : ModelSnapshot
+    [Migration("20250708155409_Order_Table")]
+    partial class Order_Table
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -161,24 +164,6 @@ namespace Ecom.infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("DeliveryMethods");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            DeliveryTime = "Only a week",
-                            Description = "The fastest delivery in the world",
-                            Name = "DHL",
-                            Price = 15m
-                        },
-                        new
-                        {
-                            Id = 2,
-                            DeliveryTime = "Only take two weeks",
-                            Description = "Name your product safe",
-                            Name = "xxx",
-                            Price = 12m
-                        });
                 });
 
             modelBuilder.Entity("Ecom.core.Entity.Order.OrderItem", b =>

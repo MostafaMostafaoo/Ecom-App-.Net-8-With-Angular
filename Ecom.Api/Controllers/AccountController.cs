@@ -1,9 +1,12 @@
 ﻿using AutoMapper;
 using Ecom.Api.Helper;
 using Ecom.core.DTO;
+using Ecom.core.Entity;
 using Ecom.core.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace Ecom.Api.Controllers
 {
@@ -13,6 +16,33 @@ namespace Ecom.Api.Controllers
     {
         public AccountController(IUnitOfWork work, IMapper mapper) : base(work, mapper)
         {
+        }
+
+        [HttpGet("get-address-for-user")]
+
+        public async Task<IActionResult> getAddress()
+        {
+            var address = await work.Auth.getUserAddress(User.FindFirst(ClaimTypes.Email).Value);
+            var result = mapper.Map<ShipAddressDTO>(address);
+            return Ok(result);
+        }
+
+
+        [HttpGet("IsUserAuth")]
+        public async Task<IActionResult> IsUserAuth()
+        {
+            return User.Identity.IsAuthenticated ? Ok() : BadRequest();
+        }
+
+
+        [Authorize]
+        [HttpPut("update-address")]
+        public async Task<IActionResult>updateAddress(ShipAddressDTO addressDTO)
+        {
+            var email = User.FindFirst(ClaimTypes.Email)?.Value;
+            var address = mapper.Map<Address>(addressDTO);
+            var result = await work.Auth.UpdateAddress(email, address);
+            return result ? Ok() : BadRequest();
         }
 
         [HttpPost("Register")]
@@ -43,7 +73,9 @@ namespace Ecom.Api.Controllers
                 Domain = "localhost",
                 Expires = DateTime.Now.AddDays(1),
                 IsEssential = true,
-                SameSite = SameSiteMode.Strict,
+                //SameSite = SameSiteMode.Strict,
+                SameSite = SameSiteMode.None, // ✅ مهم جدًا
+
             });
 
             return Ok(new ResponseAPI(200));
